@@ -1,0 +1,19 @@
+format_version: "4"
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ""
+app:
+  envs:
+  - BITRISE_STEP_ID: teams-message
+  - BITRISE_STEP_VERSION: 1.1.0
+  - BITRISE_STEP_GIT_CLONE_URL: https://github.com/Freebox-CI/bitrise-step-teams-message.git
+  - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
+workflows:
+  test:
+    steps:
+    - path::./:
+        title: Teams message sender
+        inputs:
+        - message_title: null
+        - message_desc: null
+        - teams_token: $TEAMS_WEEBHOOK
+        - debug: "yes"

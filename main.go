@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
-
-	"encoding/json"
+	"regexp"
+	"strings"
 )
 
 const (
@@ -86,10 +87,35 @@ func getToken() string {
 func getTitle() string {
 	title := os.Getenv(MessageTitleEnv)
 	if len(title) != 0 {
-		return title
+		return replaceFlagPrefix(title)
 	} else {
 		return "Empty title"
 	}
+}
+
+func replaceFlagPrefix(input string) string {
+	// Expression régulière pour détecter :xx: au début
+	re := regexp.MustCompile(`^:([a-z]{2}):`)
+	matches := re.FindStringSubmatch(input)
+	if len(matches) == 2 {
+		code := matches[1]
+		emoji := countryEmoji(code)
+		if emoji != "" {
+			// Remplacer le préfixe par l’emoji
+			return emoji + input[len(matches[0]):]
+		}
+	}
+	return input
+}
+
+func countryEmoji(code string) string {
+	code = strings.ToUpper(code)
+	if len(code) != 2 {
+		return ""
+	}
+	r1 := rune(code[0]) + 0x1F1A5
+	r2 := rune(code[1]) + 0x1F1A5
+	return string([]rune{r1, r2})
 }
 
 func getMessage() string {

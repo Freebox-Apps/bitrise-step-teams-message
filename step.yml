@@ -68,9 +68,12 @@ inputs:
   - teams_token:
     opts:
       title: Teams Workflow Token
-      description: Use a workflow with a webhook trigger. It will provide the API token once created.
+      description: |
+        Use a workflow with a webhook trigger. It will provide the API token once created.
+        
+        ⚠️ On PR triggered workflow secret are empty for security reasons. You can turn this off for a specific secret
       is_expand: true
-      is_required: false
+      is_required: true
       is_sensitive: true
   - message_title: ""
     opts:
@@ -79,6 +82,10 @@ inputs:
   - message_desc: ""
     opts:
       title: The main content of your message (HTML supported)
+      is_required: false
+  - message_mention: ""
+    opts:
+      title: Mention a user (Email address)
       is_required: false
   - debug: "no"
     opts:

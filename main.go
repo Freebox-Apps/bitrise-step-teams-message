@@ -11,11 +11,12 @@ import (
 )
 
 const (
-	TeamsTokenEnv   = "teams_token"
-	MessageTitleEnv = "message_title"
-	MessageDescEnv  = "message_desc"
-	DebugEnv        = "debug"
-	DebugKeyOk      = "yes"
+	TeamsTokenEnv     = "teams_token"
+	MessageTitleEnv   = "message_title"
+	MessageDescEnv    = "message_desc"
+	MessageMentionEnv = "message_mention"
+	DebugEnv          = "debug"
+	DebugKeyOk        = "yes"
 )
 
 func main() {
@@ -23,14 +24,15 @@ func main() {
 	token := getToken()
 
 	if len(token) == 0 {
-		fmt.Printf("\n!!! Teams weebhook not configured !!!\n\n")
+		fmt.Printf("\n!!! Missing Teams webhook !!!\n\n")
 		os.Exit(1)
 	}
 
 	title := getTitle()
 	message := getMessage()
+	mention := getMention()
 
-	card, errCard := createCard(title, message)
+	card, errCard := createCard(title, message, mention)
 
 	if errCard != nil {
 		fmt.Printf("Failed to create message, error: %#v", errCard)
@@ -48,7 +50,7 @@ func main() {
 	}
 }
 
-func createCard(title string, message string) ([]byte, error) {
+func createCard(title string, message string, mention string) ([]byte, error) {
 	card := map[string]interface{}{
 		"type": "message",
 		"attachments": []map[string]interface{}{
@@ -57,6 +59,7 @@ func createCard(title string, message string) ([]byte, error) {
 				"content": map[string]interface{}{
 					"title":   title,
 					"message": message,
+					"mention": mention,
 				},
 			},
 		},
@@ -123,7 +126,16 @@ func getMessage() string {
 	if len(message) != 0 {
 		return message
 	} else {
-		return "No message found"
+		return ""
+	}
+}
+
+func getMention() string {
+	message := os.Getenv(MessageMentionEnv)
+	if len(message) != 0 {
+		return message
+	} else {
+		return ""
 	}
 }
 
